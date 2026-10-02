@@ -252,4 +252,5 @@ class PipelineSection(ABC):
     
     def _select_input(self, parent: Misc, textVar:tk.StringVar):    
         path = filedialog.askdirectory(parent=parent, title="Select Input Directory")
-        textVar.set(path)
+        if path:
+            textVar.set(path)

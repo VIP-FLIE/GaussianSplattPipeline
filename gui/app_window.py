@@ -28,9 +28,9 @@ class AppWindow(tk.Tk):
         super().__init__()
         self.title("Gaussian Splatting Pipeline V2")
         self.geometry("1400x800")
-        current_dir = os.getcwd()
-        img1 = tk.PhotoImage(file=current_dir+"\\gui\\images\\icon128x128.png")
-        img2 = tk.PhotoImage(file=current_dir+"\\gui\\images\\icon256x256.png")
+        image_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "images")
+        img1 = tk.PhotoImage(file=os.path.join(image_dir, "icon128x128.png"))
+        img2 = tk.PhotoImage(file=os.path.join(image_dir, "icon256x256.png"))
         self.iconphoto(True, img1, img2)
         self.manager = manager
         self.executor = executor
@@ -127,13 +127,14 @@ class AppWindow(tk.Tk):
         Also checks to see if the window is already open and if so,
         brings it to the front
         """
-        if self.window_manager_open and self.pathsWin:
+        if self.pathsWin is not None and self.pathsWin.winfo_exists():
             self.pathsWin.lift()
         else:
             self.window_manager_open = True
             self.pathsWin = PathSelectionWindow(self, self.manager.config)
             self.pathsWin.set_callback(self.preview_widget.refresh)
             self.pathsWin.protocol("WM_DELETE_WINDOW", self._on_path_selection_closing)
+            self.pathsWin.bind("<Destroy>", self._on_path_selection_destroyed, add="+")
         # Optional: Make it modal
         # win.transient(self)
         # win.grab_set()
@@ -143,11 +144,17 @@ class AppWindow(tk.Tk):
         Destroys the path selection window object on close and 
         sets the flag back to false so a new window can open
         """
+        window = self.pathsWin
         self.window_manager_open = False
-        if self.pathsWin:
-            self.pathsWin.destroy()
-
         self.pathsWin = None
+        if window is not None:
+            window.destroy()
+
+    def _on_path_selection_destroyed(self, event):
+        # Child widgets also emit Destroy; only reset for the dialog itself.
+        if event.widget is self.pathsWin:
+            self.window_manager_open = False
+            self.pathsWin = None
         
     def _open_settings_window(self, firstTimeStartup:bool = False):
         """

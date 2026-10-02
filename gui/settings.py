@@ -129,7 +129,8 @@ class SettingsWindow(tk.Toplevel):
 
     def _select_input(self, textVar:tk.StringVar, fileDialogTitle:str):    
         path = filedialog.askopenfilename(parent=self, title=fileDialogTitle, filetypes=[("Windows Files", "*.exe"), ("All files", "*.*")])
-        textVar.set(path)
+        if path:
+            textVar.set(path)
 
     
 settings_outline = {

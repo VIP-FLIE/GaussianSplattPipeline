@@ -94,22 +94,12 @@ class PathSelectionWindow(tk.Toplevel):
         self._populate_file_list(ctx.input_dir)
 
     def _select_input(self):
-        path = filedialog.askdirectory(title="Select Input Directory")
-        try:
-            self.lift()
-        except:
-            pass
+        path = filedialog.askdirectory(parent=self, title="Select Input Directory")
         if path:
             self.config.global_context.input_dir = path
-            try:self._refresh_ui_from_config()
-            except:pass
-            try:
-                if self.on_update: self.on_update()
-            except:pass
-        try:
-            self.lift()
-        except:
-            pass
+            self._refresh_ui_from_config()
+            if self.on_update:
+                self.on_update()
 
     def _clear_input(self):
         self.config.global_context.input_dir = ""
@@ -117,22 +107,12 @@ class PathSelectionWindow(tk.Toplevel):
         if self.on_update: self.on_update()
 
     def _select_output(self):
-        path = filedialog.askdirectory(title="Select Output Directory")
-        try:
-            self.lift()
-        except:
-            pass
+        path = filedialog.askdirectory(parent=self, title="Select Output Directory")
         if path:
             self.config.global_context.output_dir = path
-            try:self._refresh_ui_from_config()
-            except:pass
-            try:
-                if(self.on_update): self.on_update()
-            except:pass
-        try:
-            self.lift()
-        except:
-            pass     
+            self._refresh_ui_from_config()
+            if self.on_update:
+                self.on_update()
 
     def _clear_output(self):
         self.config.global_context.output_dir = ""
