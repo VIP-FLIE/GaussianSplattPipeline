@@ -102,6 +102,8 @@ class LibraryWidget(tk.Frame):
     def _on_toggle(self, section, var):
         is_staged = var.get()
         self.manager.toggle_section_stage(section, is_staged)
+        if is_staged:
+            self.on_view_section(section)
         # Refresh is triggered by callback to handle Single-Select logic automatically updating UI
 
     def _refresh_toggles(self):
@@ -134,4 +136,3 @@ class LibraryWidget(tk.Frame):
         """
         canvas_width = event.width - scrollbar.winfo_width() - 5
         canvas.itemconfigure(inner_frame_id, width=canvas_width)
-

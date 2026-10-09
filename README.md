@@ -12,6 +12,8 @@ The pipeline currently supports the following
 
   • Frame Deduplication
 
+  • Mask Selection UI
+
   • Metashape Image Allignment
 
   • Brush Based Splat Training

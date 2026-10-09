@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
-from gui.style import bgColor, normalTextColor
+from gui.style import bgColor, normalTextColor, buttonTextColor, buttonDisabledTextColor
 
 class SettingsWindow(tk.Toplevel):
     """
@@ -29,7 +29,7 @@ class SettingsWindow(tk.Toplevel):
         self.loadSettingButtons()
         self.savebuttonholder = tk.Frame(self, background=bgColor)
         self.savebuttonholder.pack(side="bottom", fill="both")
-        self.closebutton = tk.Button(self.savebuttonholder, text="Save", command=self.destroy, background=bgColor, foreground=normalTextColor)
+        self.closebutton = tk.Button(self.savebuttonholder, text="Save", command=self.destroy, background=bgColor, foreground=buttonTextColor, disabledforeground=buttonDisabledTextColor)
         self.closebutton.pack(anchor='sw', padx=15, pady=15, side="right")
 
 
@@ -40,11 +40,11 @@ class SettingsWindow(tk.Toplevel):
         self.loadSettingButtons()
         self.savebuttonholder = tk.Frame(self, background=bgColor)
         self.savebuttonholder.pack(side="bottom", fill="both")
-        self.closebutton = tk.Button(self.savebuttonholder, text="Cancel", command=lambda *args: self.close_window([False, False]), background=bgColor, foreground=normalTextColor)
+        self.closebutton = tk.Button(self.savebuttonholder, text="Cancel", command=lambda *args: self.close_window([False, False]), background=bgColor, foreground=buttonTextColor, disabledforeground=buttonDisabledTextColor)
         self.closebutton.pack(anchor='sw', padx=(5,15), pady=15, side="right")
-        self.savebutton = tk.Button(self.savebuttonholder, text="Save", command=lambda *args: self.close_window([True, False]), background=bgColor, foreground=normalTextColor)
+        self.savebutton = tk.Button(self.savebuttonholder, text="Save", command=lambda *args: self.close_window([True, False]), background=bgColor, foreground=buttonTextColor, disabledforeground=buttonDisabledTextColor)
         self.savebutton.pack(anchor='sw', padx=(5,15), pady=15, side="right")
-        self.savebuttonrestart = tk.Button(self.savebuttonholder, text="Save and Restart", command=lambda *args: self.close_window([True, True]), background=bgColor, foreground=normalTextColor)
+        self.savebuttonrestart = tk.Button(self.savebuttonholder, text="Save and Restart", command=lambda *args: self.close_window([True, True]), background=bgColor, foreground=buttonTextColor, disabledforeground=buttonDisabledTextColor)
         self.savebuttonrestart.pack(anchor='sw', padx=(5,15), pady=15, side="right")
 
         
@@ -113,7 +113,7 @@ class SettingsWindow(tk.Toplevel):
         textvar = tk.StringVar(value=current_value)
         textvar.trace_add("write", lambda *args: self._set_string(setting_key, setting_name, textvar.get()))
 
-        tk.Button(frame1, text="Select...", anchor='e', command=lambda:self._select_input(textvar, fileDialogTitle), background=bgColor, foreground=normalTextColor
+        tk.Button(frame1, text="Select...", anchor='e', command=lambda:self._select_input(textvar, fileDialogTitle), background=bgColor, foreground=buttonTextColor, disabledforeground=buttonDisabledTextColor
                   ).pack(side='right', padx=2)
         
         frame2 = tk.Frame(topFrame, bg=bgColor)

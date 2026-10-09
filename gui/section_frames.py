@@ -1,5 +1,5 @@
 import tkinter as tk
-from sections.base_section import PipelineSection
+from .section_options import SectionOptions
 from .style import bgColor, normalTextColor
 
 class SectionFrame(tk.Frame):
@@ -7,7 +7,7 @@ class SectionFrame(tk.Frame):
     The Parent frame for the settings(middle) pane.
     It simply calls `section.render_options(self)`.
     """
-    def __init__(self, parent: tk.Widget, section: PipelineSection):
+    def __init__(self, parent: tk.Widget, section: SectionOptions):
         super().__init__(parent)
         self.section = section
         self.config(background=bgColor)

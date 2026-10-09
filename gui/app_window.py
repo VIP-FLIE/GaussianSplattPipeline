@@ -6,7 +6,7 @@ import tkinter as tk
 import queue
 import os
 import json
-from .style import bgColor, normalTextColor, toolbarColor
+from .style import bgColor, normalTextColor, toolbarColor, buttonTextColor, buttonDisabledTextColor
 from core.pipeline_manager import PipelineManager
 from core.executor import AsyncExecutor
 from .console_widget import ConsoleWidget
@@ -50,6 +50,7 @@ class AppWindow(tk.Tk):
     def _on_global_staging_change(self):
         # Update Preview Widget
         self.preview_widget.refresh()
+        self.runbutton.configure(state="normal" if self._staged_sections_executable() else "disabled")
         # Update Library Toggles (handled by its own listener, but safe to keep decoupling if needed)
 
     def _setup_ui(self):
@@ -66,20 +67,22 @@ class AppWindow(tk.Tk):
         
         # NOTE: Removed 'bg' kwarg which causes empty buttons on Mac
         runButton = tk.Button(toolbar, text="Run-Pipeline", command=self._run_sequence, bd=0)
+        self.runbutton = runButton
+        runButton.configure(state="normal" if self._staged_sections_executable() else "disabled")
         runButton.pack(side='left', padx=(10,0), pady=5, ipadx=1, ipady=1)
         
         estopButton = tk.Button(toolbar, text="E-Stop", command=lambda: self.manager.stop_sequence(), bd=0)
         estopButton.pack(side='left', padx=(10,0), pady=5, ipadx=1, ipady=1)
-        estopButton.configure(background=toolbarColor, foreground=normalTextColor, font=("Consolas", 10))
-        runButton.configure(background=toolbarColor, foreground=normalTextColor, font=("Consolas", 10))
+        estopButton.configure(background=toolbarColor, foreground=buttonTextColor, disabledforeground=buttonDisabledTextColor, font=("Consolas", 10))
+        runButton.configure(background=toolbarColor, foreground=buttonTextColor, disabledforeground=buttonDisabledTextColor, font=("Consolas", 10))
         
         self.pathsbutton = tk.Button(toolbar, text="Set-Paths", command=self._open_path_selection, bd=0)
         self.pathsbutton.pack(side='left', padx=(10,0), pady=5, ipadx=1, ipady=1)
-        self.pathsbutton.configure(background=toolbarColor, foreground=normalTextColor, font=("Consolas", 10))
+        self.pathsbutton.configure(background=toolbarColor, foreground=buttonTextColor, disabledforeground=buttonDisabledTextColor, font=("Consolas", 10))
         
         self.settingsbutton = tk.Button(toolbar, text="Settings", command=self._open_settings_window, bd=0)
         self.settingsbutton.pack(side='left', padx=(10,0), pady=5, ipadx=1, ipady=1)
-        self.settingsbutton.configure(background=toolbarColor, foreground=normalTextColor, font=("Consolas", 10))
+        self.settingsbutton.configure(background=toolbarColor, foreground=buttonTextColor, disabledforeground=buttonDisabledTextColor, font=("Consolas", 10))
 
         # Main Paned Window (Horizontal split: Left, Middle, Right)
         main_pane = tk.PanedWindow(self.mainGUI, orient=tk.HORIZONTAL, opaqueresize=False, bd=0)
@@ -94,6 +97,8 @@ class AppWindow(tk.Tk):
         # 2. Middle: Options
         self.options_container = tk.Frame(main_pane, background=bgColor)
         main_pane.add(self.options_container, minsize=400)
+        tk.Label(self.options_container, text="Select a step on the left\nto configure its options.",
+                 background=bgColor, foreground=normalTextColor).pack(padx=20, pady=20)
 
         # 3. Right: Preview
         self.preview_widget = PreviewWidget(main_pane, self.manager)
@@ -225,7 +230,13 @@ class AppWindow(tk.Tk):
         settings_file = open(settings_path, "w")
         json.dump(self.global_settings, settings_file, sort_keys=False, indent=4)
     
+    def _staged_sections_executable(self):
+        return all(callable(getattr(section, "build_command", None))
+                   for section in self.manager.staged_sections)
+
     def _run_sequence(self):
+        if not self._staged_sections_executable():
+            return
         self.pathsbutton.configure(state="disabled")
         self.settingsbutton.configure(state="disabled")
         

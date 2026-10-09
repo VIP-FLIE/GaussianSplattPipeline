@@ -1,6 +1,6 @@
 import tkinter as tk
 from core.pipeline_manager import PipelineManager
-from .style import bgColor, sectionBorderColor, toolbarColor, normalTextColor
+from .style import bgColor, sectionBorderColor, toolbarColor, normalTextColor, buttonTextColor, buttonDisabledTextColor
 class PreviewWidget(tk.Frame):
     """
     Right Sidebar.
@@ -22,11 +22,13 @@ class PreviewWidget(tk.Frame):
         btn_frame = tk.Frame(self, background=bgColor, bd=1)
         btn_frame.pack(fill='x', pady=5)
         
-        tk.Button(btn_frame, text="▲", command=self._move_up, background=bgColor, foreground=normalTextColor, 
-                relief="flat").pack(side='left', padx=5, expand=True)
-        tk.Button(btn_frame, text="▼", command=self._move_down, background=bgColor, foreground=normalTextColor,
-                relief="flat").pack(side='left', padx=5, expand=True)
-        
+        tk.Button(btn_frame, text="▲", command=self._move_up, background=bgColor,
+                  foreground=buttonTextColor, disabledforeground=buttonDisabledTextColor,
+                  relief="flat").pack(side='left', padx=5, expand=True)
+        tk.Button(btn_frame, text="▼", command=self._move_down, background=bgColor,
+                  foreground=buttonTextColor, disabledforeground=buttonDisabledTextColor,
+                  relief="flat").pack(side='left', padx=5, expand=True)
+
         self.warning_lbl = tk.Label(self, text="", foreground="red", wraplength=180, background=bgColor)
         self.warning_lbl.pack(pady=5)
 

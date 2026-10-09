@@ -23,6 +23,7 @@ from sections.extract_frames_section import ExtractFramesSection
 from sections.deduplicate_section import DeduplicateSection
 from sections.metashape_section import MetashapeSection
 from sections.brush_section import BrushSection
+from sections.mask_section import MaskSection
 
 def main(debug:bool=False):
     output_queue = queue.Queue()
@@ -42,8 +43,13 @@ def main(debug:bool=False):
     cat_prep.add_section(DeduplicateSection("Deduplicate Frames", config))
     manager.add_category(cat_prep)
     
-    # 3. SfM (Single Select implied)
-    cat_sfm = PipelineCategory("Structure from Motion", SelectionMode.SINGLE, stage_index=3)
+    # 3. Masking
+    cat_masks = PipelineCategory("Masking", SelectionMode.SINGLE, stage_index=3)
+    cat_masks.add_section(MaskSection("Apply Masks", config))
+    manager.add_category(cat_masks)
+
+    # 4. SfM (Single Select implied)
+    cat_sfm = PipelineCategory("Structure from Motion", SelectionMode.SINGLE, stage_index=4)
     #TODO: ImplementTest Colmap
     #cat_sfm.add_section(ExampleSection("COLMAP", config))
     #TODO: ImplementTest Glomap
@@ -52,14 +58,14 @@ def main(debug:bool=False):
     cat_sfm.add_section(MetashapeSection("Metashape (Colmap Output)", config))
     manager.add_category(cat_sfm)
     
-    # 4. Training
-    cat_train = PipelineCategory("Training", SelectionMode.SINGLE, stage_index=4)
+    # 5. Training
+    cat_train = PipelineCategory("Training", SelectionMode.SINGLE, stage_index=5)
     cat_train.add_section(BrushSection("Brush", config))
     manager.add_category(cat_train)
     
-    # 5. Debugs
+    # 6. Debugs
     if (debug):
-        cat_debug = PipelineCategory("Testing", SelectionMode.SINGLE, stage_index=5)
+        cat_debug = PipelineCategory("Testing", SelectionMode.SINGLE, stage_index=6)
         cat_debug.add_section(Newline_Test("Newline Test", config))
         manager.add_category(cat_debug)
         print("Debug Mode Enabled")
@@ -68,6 +74,7 @@ def main(debug:bool=False):
     
     # --- Launch ---
     app = AppWindow(manager, executor, output_queue)
+    app._show_section_options(cat_masks.sections[0])
     app.configure(bg=bgColor)
     def on_close():
         executor.stop()

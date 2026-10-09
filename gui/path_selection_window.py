@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, ttk
 import os
-from .style import bgColor, normalTextColor, toolbarColor
+from .style import bgColor, normalTextColor, toolbarColor, buttonTextColor, buttonDisabledTextColor
 
 from core.pipeline_manager import PipelineConfiguration
 
@@ -36,9 +36,9 @@ class PathSelectionWindow(tk.Toplevel):
         self.var_input = tk.StringVar()
         tk.Entry(frame_in, textvariable=self.var_input, state='readonly',background=bgColor, foreground=normalTextColor,readonlybackground=bgColor
                  ).pack(fill='x', side='left', expand=True, padx=5)
-        tk.Button(frame_in, text="Select...", command=self._select_input, background=bgColor, foreground=normalTextColor
+        tk.Button(frame_in, text="Select...", command=self._select_input, background=bgColor, foreground=buttonTextColor, disabledforeground=buttonDisabledTextColor
                   ).pack(side='right', padx=2)
-        tk.Button(frame_in, text="Clear", command=self._clear_input, background=bgColor, foreground=normalTextColor
+        tk.Button(frame_in, text="Clear", command=self._clear_input, background=bgColor, foreground=buttonTextColor, disabledforeground=buttonDisabledTextColor
                   ).pack(side='right', padx=2)
 
         # Output Dir
@@ -48,13 +48,13 @@ class PathSelectionWindow(tk.Toplevel):
         self.var_output = tk.StringVar()
         tk.Entry(frame_out, textvariable=self.var_output, state='readonly', background=bgColor, foreground=normalTextColor, readonlybackground=bgColor
                  ).pack(fill='x', side='left', expand=True, padx=5)
-        tk.Button(frame_out, text="Select...", command=self._select_output, background=bgColor, foreground=normalTextColor
+        tk.Button(frame_out, text="Select...", command=self._select_output, background=bgColor, foreground=buttonTextColor, disabledforeground=buttonDisabledTextColor
                   ).pack(side='right', padx=2)
-        tk.Button(frame_out, text="Clear", command=self._clear_output, background=bgColor, foreground=normalTextColor
+        tk.Button(frame_out, text="Clear", command=self._clear_output, background=bgColor, foreground=buttonTextColor, disabledforeground=buttonDisabledTextColor
                   ).pack(side='right', padx=2)
 
         # Confirm Button
-        tk.Button(self, text="Confirm Selection", command=self.destroy, background=bgColor, foreground=normalTextColor
+        tk.Button(self, text="Confirm Selection", command=self.destroy, background=bgColor, foreground=buttonTextColor, disabledforeground=buttonDisabledTextColor
                   ).pack(side='bottom', pady=10)
 
         # File List Preview
