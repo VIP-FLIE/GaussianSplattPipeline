@@ -5,7 +5,7 @@ from glob import glob
 from pathlib import Path
 
 class FrameExtractor:
-    def __init__(self, source_path, output_dir, output_format="jpg", every_n=1, dry_run=False):
+    def __init__(self, source_path, output_dir, output_format="jpg", every_n=1, dry_run=False, max_photos=0):
         """
         Initialize the FrameExtractor.
         
@@ -15,12 +15,14 @@ class FrameExtractor:
             output_format (str): Image format (e.g., 'jpg', 'png').
             every_n (int): Extract every Nth frame.
             dry_run (bool): If True, simulate actions without writing files.
+            max_photos (int): Maximum photos per video (0 means unlimited).
         """
         self.source_path = str(source_path)
         self.output_dir = str(output_dir)
         self.output_format = output_format.lstrip('.')
         self.every_n = max(1, int(every_n))
         self.dry_run = dry_run
+        self.max_photos = max(0, int(max_photos))
         
         # Supported video extensions
         self.video_extensions = ['*.mp4', '*.avi', '*.mov', '*.mkv', '*.flv', '*.wmv']
@@ -57,6 +59,8 @@ class FrameExtractor:
         print(f"Processing: {os.path.basename(video_path)} -> {destination_dir}")
         if self.every_n > 1:
             print(f"  Strategy: Extracting every {self.every_n}th frame.")
+        if self.max_photos > 0:
+            print(f"  Maximum photos: {self.max_photos}")
         
         cap = cv2.VideoCapture(video_path)
         if not cap.isOpened():
@@ -70,6 +74,8 @@ class FrameExtractor:
         saved_count = 0
         
         while True:
+            if self.max_photos > 0 and saved_count >= self.max_photos:
+                break
             ret, frame = cap.read()
             if not ret:
                 break
@@ -87,6 +93,8 @@ class FrameExtractor:
                     success = cv2.imwrite(output_path, frame)
                     if not success:
                         print(f"  Error writing frame {frame_count}")
+                        frame_count += 1
+                        continue
                 saved_count += 1
             
             frame_count += 1
@@ -130,6 +138,7 @@ if __name__ == "__main__":
     parser.add_argument("--output_dir", required=True, help="Directory to save extracted frames")
     parser.add_argument("--format", type=str, default="png", help="Output image format (jpg, png, bmp, etc.)")
     parser.add_argument("--every_n", type=int, default=1, help="Extract every Nth frame (default: 1)")
+    parser.add_argument("--max_photos", type=int, default=0, help="Maximum photos per video (0 means unlimited)")
     parser.add_argument("--dry_run", action="store_true", help="Simulate without writing files")
     
     args = parser.parse_args()
@@ -139,6 +148,7 @@ if __name__ == "__main__":
         output_dir=args.output_dir,
         output_format=args.format,
         every_n=args.every_n,
-        dry_run=args.dry_run
+        dry_run=args.dry_run,
+        max_photos=args.max_photos
     )
     extractor.run()

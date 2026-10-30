@@ -161,6 +161,15 @@ class ExtractFramesCommandBuilder:
                     cmd.extend(["--every_n", str(n)])
             except (ValueError, TypeError):
                 pass
+
+        # Maximum photos per video (0 means unlimited)
+        if "max_photos" in config:
+            try:
+                max_photos = int(config["max_photos"])
+                if max_photos > 0:
+                    cmd.extend(["--max_photos", str(max_photos)])
+            except (ValueError, TypeError):
+                pass
             
         # Dry Run
         dr = config.get("dry_run", False)

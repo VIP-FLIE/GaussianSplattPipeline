@@ -14,11 +14,12 @@ class ExtractFramesSection(PipelineSection):
         
     def render_options(self, parent: tk.Frame):
         # Section title or description
-        self._add_subtitle(parent, text="Extract frames from video files.")
+        self._add_subtitle(parent, text="Extract frames from video files.\nThe photo limit applies to each video.")
         
         # Add some configurable inputs
         self._add_dropdown(parent, "Output Format", "format", ["png", "jpg"], default_val="png")
         self._add_int_spinbox(parent, "Extract Every Nth Frame", "every_n", 1, 1000, 1, 1)
+        self._add_int_spinbox(parent, "Max Photos (0=All)", "max_photos", 0, 1000000, 1, 0)
         self._add_checkbox(parent, "Dry Run (Simulate)", "dry_run", default_val=False)
 
     def build_command(self, settings: dict) -> List[str]:
